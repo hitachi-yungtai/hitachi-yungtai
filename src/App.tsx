@@ -1,72 +1,57 @@
-import { useEffect, useState } from "react";
+import React, { useState } from 'react';
+import errorData from './error_code.json';
 
-interface RowData {
-  code: string;
-  content: string;
-  model: string;
-}
+const App: React.FC = () => {
+  const [selectedModel, setSelectedModel] = useState<string>('');
+  const [selectedCode, setSelectedCode] = useState<string>('');
 
-function App() {
-  const [data, setData] = useState<RowData[]>([]);
-  const [keyword, setKeyword] = useState("");
+  const models = Object.keys(errorData);
+  const codes = selectedModel ? Object.keys(errorData[selectedModel]) : [];
 
-  useEffect(() => {
-    fetch("https://docs.google.com/spreadsheets/d/1QrALMBdjByS0_nYIlWGcEZpGqFVK2CbjPImtvgWXbUE/gviz/tq?tqx=out:json")
-      .then((res) => res.text())
-      .then((text) => {
-        const json = JSON.parse(text.substring(47).slice(0, -2));
-        const rows = json.table.rows.map((r: any) => ({
-          code: r.c[0]?.v ?? "",
-          content: r.c[1]?.v ?? "",
-          model: r.c[2]?.v ?? "",
-        }));
-        setData(rows);
-      });
-  }, []);
+  const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedModel(e.target.value);
+    setSelectedCode(''); // reset code when model changes
+  };
 
-  const results = data.filter(
-    (item) =>
-      item.code.toString().includes(keyword) ||
-      item.content.includes(keyword) ||
-      item.model.includes(keyword)
-  );
+  const handleCodeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCode(e.target.value);
+  };
+
+  const description = selectedModel && selectedCode ? errorData[selectedModel][selectedCode] : '';
 
   return (
-    <div style={{ padding: 20, fontFamily: "Arial" }}>
-      <h2>故障碼查詢</h2>
+    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+      <h1>錯誤碼查詢</h1>
 
-      <input
-        style={{ width: "100%", padding: 10, fontSize: 16 }}
-        placeholder="輸入故障碼或關鍵字..."
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
-      />
-
-      <div>
-        {results.map((item, i) => (
-          <div
-            key={i}
-            style={{
-              marginTop: 15,
-              padding: 15,
-              borderRadius: 8,
-              background: "#f5f5f5",
-            }}
-          >
-            <div>
-              <b>Code:</b> {item.code}
-            </div>
-            <div>
-              <b>Content:</b> {item.content}
-            </div>
-            <div>
-              <b>Model:</b> {item.model}
-            </div>
-          </div>
-        ))}
+      <div style={{ marginBottom: '10px' }}>
+        <label>選擇機種: </label>
+        <select value={selectedModel} onChange={handleModelChange}>
+          <option value="">--請選擇機種--</option>
+          {models.map((model) => (
+            <option key={model} value={model}>{model}</option>
+          ))}
+        </select>
       </div>
+
+      {selectedModel && (
+        <div style={{ marginBottom: '10px' }}>
+          <label>選擇錯誤代碼: </label>
+          <select value={selectedCode} onChange={handleCodeChange}>
+            <option value="">--請選擇代碼--</option>
+            {codes.map((code) => (
+              <option key={code} value={code}>{code}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {description && (
+        <div>
+          <strong>錯誤描述:</strong> {description}
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default App;
