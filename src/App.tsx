@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import errorData from './error_code.json';
+
+
+import errorDataJson from './error_code.json';
+
+type ErrorData = {
+  [model: string]: { [code: string]: string };
+};
+
+const errorData: ErrorData = errorDataJson;
 
 const App: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState<string>('');

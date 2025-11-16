@@ -8,9 +8,10 @@ with open('error_code.csv', encoding='utf-8') as csvfile:
     for row in rows:
         model = row[2]
         if model not in result.keys():
-            result[row[2]] = [{row[0]: row[1]}]
+            result[row[2]] = {}
+            result[row[2]][row[0]] = row[1]
         else:
-            result[row[2]].append({row[0]: row[1]})
+            result[row[2]][row[0]] = row[1]
 
 
 with open("error_codes.json", "w", encoding="utf-8") as f:
