@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
 export default defineConfig({
-  base: "error_code",
-  // plugins: [react()],
-})
+  base: '/error_code/',  // 假設你的 repo URL 是 hitachi-yungtai.github.io/error_code/
+  plugins: [react()]
+});
